@@ -1,0 +1,360 @@
+---
+title: "General workflow no covariate"
+output: html_notebook
+---
+ CZ529 3a: extend the basic model of CZ325 to 7 managed areas and 7 sub areas of GTMNERR
+ Also includes parameters a.k.a responses of Shell Height, Percent Live and Density
+ 
+```{r}
+library(tidyverse)
+library(magrittr)
+library(cmdstanr)
+library(here)
+library(sf)
+library(terra) # is this needed?
+library(leaflet) # is this needed?
+library(shiny) # is this needed?
+library(htmlwidgets)
+library(spsurvey) # contains grts
+```
+
+```{r}
+source(here("./code/SpatialPredictionUtilities.R"))
+```
+
+Some shapefiles to partition GTMNERR
+```{r}
+gtm_managed_area_polygons_Guana_River = st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Guana_River"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_Salt_Run =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Salt_Run"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_Tolomato_River =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Tolomato_River"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_St_Augustine =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "St_Augustine"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_Pellicer_Flats =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Pellicer_Flats"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_Butler_Beach =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Butler_Beach"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+gtm_managed_area_polygons_Fort_Matanzas =  st_transform(st_read(here("./data/GTM_Oyster_Monitoring_Region_Polygons"), layer = "Fort_Matanzas"), "+proj=longlat +ellps=WGS84 +datum=WGS84")
+
+```
+
+
+
+Input:
+1) managed area
+2) parameter: one of ShellHeight, PercentLive, Density
+3) covariate: one of none, salinity, dissolved_oxygen, depth
+
+
+"Pine Island Sound Aquatic Preserve" samples has only 3 unique Universal Reef IDs 3036  3039 34843 for ShellHeight
+ 
+"Lemon Bay Aquatic Preserve" has ony 3 unique UniversalReefIDs 3935 29772 29880 for ShellHeight
+
+"Jensen Beach to Jupiter Inlet Aquatic Preserve" has only 1 unique UniversalReefID 5490
+
+"Indian River-Vero Beach to Ft. Pierce Aquatic Preserve" has only 6 unique UniversalReefIDs: 5478  5482  5494  5503  5505 34807
+Files required for parameter:  
+Uncomment the Managed Area and Parameter you want to model
+If the Managed Area is Guana Tolomato Matanzas National Estuarine Research Reserve, select a sub area too
+```{r}
+# Managed_Area = "Estero Bay Aquatic Preserve" 
+# Managed_Area = "Guana Tolomato Matanzas National Estuarine Research Reserve" # 237 points split across two regions 
+ # GTM_sub_area = "Guana_River"
+# GTM_sub_area = "Salt_Run"
+# GTM_sub_area = "Tolomato_River"
+# GTM_sub_area = "St_Augustine"
+# GTM_sub_area = "Pellicer_Flats"
+# GTM_sub_area = "Butler_Beach"
+# GTM_sub_area = "Fort_Matanzas"
+
+
+
+# Managed_Area = "Guana River Marsh Aquatic Preserve"
+# Managed_Area = "Apalachicola Bay Aquatic Preserve" 
+Managed_Area = "Apalachicola National Estuarine Research Reserve" # includes "Apalachicola Bay Aquatic Preserve" and 17 hrs for shell height
+# Managed_Area = "Indian River-Vero Beach to Ft. Pierce Aquatic Preserve" 
+## Managed_Area = "Jensen Beach to Jupiter Inlet Aquatic Preserve"
+# Managed_Area = "Lemon Bay Aquatic Preserve" 
+# Managed_Area = "Pine Island Sound Aquatic Preserve" 
+#  Parameter = "Shell Height" 
+ Parameter = "Percent Live"  
+# Parameter = "Density" 
+#Covariate = "None"
+scale = ifelse(Parameter == "Density",1/100, 1)
+
+```
+Helper function to convert geometry to X,Y
+```{r}
+ReplaceGeometry = function(SF){
+  SF %>%  st_coordinates() %>%  cbind(st_drop_geometry(SF),.)
+}
+```
+# Need to make some labels for the "legacy points"
+# first, a litle helper function to add some breaks if the labels get too big
+```{r}
+add_breaks = function(PL, threshold = 5){
+program_ids = PL
+program_ids = unlist(str_split(program_ids,","))
+if(length(program_ids) <= threshold) return(PL) # else add some breaks
+program_chunks <- split(program_ids, ceiling(seq_along(program_ids) / threshold))
+program_formatted <- sapply(program_chunks, function(chunk) paste(chunk, collapse = ", "))
+program_string <- paste(program_formatted, collapse = "<br>")
+}
+```
+
+# Managed area geometry
+```{r}
+SEACAR_GIS_Processing_Layers_ORCP_Managed_Areas_Apr2025 = sf::st_read(dsn = here("./data/SEACAR_GIS_Processing_Layers.gdb"), layer ="ORCP_Managed_Areas_Apr2025") 
+SEACAR_GIS_Processing_Layers_ORCP_Managed_Areas_Apr2025 %>%
+  filter(LONG_NAME == Managed_Area) %>% 
+  sf::st_transform(., crs = st_crs("WGS84")) -> Managed_Area_sf
+```
+
+#Sampling locations with all parameters
+If "Apalachicola Bay Aquatic Preserve", restrict to 2018 or later. The data contain 200K samples dating back to 1982.
+If "Apalachicola National Estuarine Research Reserve", restrict to 2018 or later. The data contain 420K samples dating back to 1982.
+```{r}
+All_OYSTER_Parameters_2025_Apr_24 = read.table(here("./data/All_OYSTER_Parameters-2025-Apr-24.txt"),   sep = "|", header = TRUE,comment.char = "", quote = "")
+All_OYSTER_Parameters_2025_Apr_24 %<>% filter(OriginalLatitude != "NULL")
+All_OYSTER_Parameters_2025_Apr_24 %<>% filter(OriginalLongitude != "NULL")
+All_OYSTER_Parameters_2025_Apr_24 %<>% mutate( OriginalLatitude = as.numeric(OriginalLatitude))
+All_OYSTER_Parameters_2025_Apr_24 %<>% mutate( OriginalLongitude = as.numeric(OriginalLongitude))
+All_OYSTER_Parameters_2025_Apr_24_sf = st_as_sf(All_OYSTER_Parameters_2025_Apr_24, coords =  c("OriginalLongitude","OriginalLatitude") , crs = st_crs("WGS84"))
+if(Managed_Area == "Apalachicola Bay Aquatic Preserve" || Managed_Area == "Apalachicola National Estuarine Research Reserve"){
+All_OYSTER_Parameters_2025_Apr_24_sf %>% filter(ManagedAreaName == Managed_Area) %>% filter(Year >= 2018) %>% filter(ParameterName == Parameter)  -> Managed_Area_Parameter_samples_sf
+} else{
+  All_OYSTER_Parameters_2025_Apr_24_sf %>% filter(ManagedAreaName == Managed_Area) %>% filter(ParameterName == Parameter)  -> Managed_Area_Parameter_samples_sf
+  
+}
+
+if( Managed_Area == "Guana Tolomato Matanzas National Estuarine Research Reserve"){
+  # choose one of 7 sub areas to intersect with
+  if(  GTM_sub_area == "Guana_River"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Guana_River) 
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Guana_River)
+     }
+  if(  GTM_sub_area == "Salt_Run"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Salt_Run)
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Salt_Run)
+   }
+     
+  if(  GTM_sub_area == "Tolomato_River"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Tolomato_River)
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Tolomato_River)
+  }
+  if(  GTM_sub_area == "St_Augustine"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_St_Augustine)
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_St_Augustine)
+  }
+  if(  GTM_sub_area == "Pellicer_Flats"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Pellicer_Flats)
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Pellicer_Flats)
+  }
+  if(  GTM_sub_area == "Butler_Beach"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Butler_Beach)
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Butler_Beach)
+  }
+  
+  if(  GTM_sub_area == "Fort_Matanzas"){
+     Managed_Area_Parameter_samples_sf = st_intersection(Managed_Area_Parameter_samples_sf,gtm_managed_area_polygons_Fort_Matanzas)  
+     Managed_Area_sf = st_intersection(Managed_Area_sf,gtm_managed_area_polygons_Fort_Matanzas)
+  }
+}
+
+
+Managed_Area_Parameter_samples_sf %<>% mutate(SampleDate = as.POSIXct(SampleDate))
+
+# Universal Reef ID Lon Lat
+# finds the average lon and lat of samples on a reef
+cbind(Managed_Area_Parameter_samples_sf, st_coordinates(Managed_Area_Parameter_samples_sf))  %>% dplyr::select( UniversalReefID, SampleDate,X,Y) %>%  group_by(UniversalReefID) %>%  summarize(mean_lon = mean(X), mean_lat = mean(Y) ) %>%
+as.data.frame() %>% dplyr::select(UniversalReefID, mean_lon, mean_lat) -> managed_area_parameter_sample_URI_positions 
+
+# add the average positions to the samples.
+left_join(Managed_Area_Parameter_samples_sf,managed_area_parameter_sample_URI_positions,by = join_by(UniversalReefID)) %>% 
+   group_by(UniversalReefID) %>% mutate(ElapsedMonths = time_length(SampleDate - min(SampleDate), unit = "month"), FirstSampleYear = year(min(SampleDate)), LastSampleYear = year(max(SampleDate)) ) %>%  
+   mutate( group = cur_group_id()) -> Managed_Area_Parameter_samples_sf
+```
+
+# grid positions for research purposes
+```{r}
+grid = spsample(Polygon(st_coordinates(Managed_Area_Parameter_samples_sf)[chull(st_coordinates(Managed_Area_Parameter_samples_sf)),]), n = 256, type = "regular")
+grid_positions = grid@coords
+```
+
+# Oyster positions
+```{r}
+sf_use_s2(FALSE) #turns off spherical geometry - there are some issues that sf complains about and this fixes them
+Oyster_Beds_in_Florida = st_read(here("./data/Oyster_Beds_in_Florida.geojson"))
+Oyster_Beds_in_Florida_valid = st_make_valid(Oyster_Beds_in_Florida) # fixes polygons in case there is something wrong with Oyster_Beds_in_Florida polygons
+Oyster_Beds_in_Managed_Area = st_intersection(Oyster_Beds_in_Florida_valid, Managed_Area_sf) # these are polygons
+Oyster_Beds_in_Managed_Area %>% sf::st_transform(., crs = st_crs("WGS84")) %>% st_point_on_surface() %>% st_point_on_surface() %>% ReplaceGeometry() %>%  dplyr::select(OBJECTID,X,Y) -> managed_area_oyster_objectID_points
+```
+
+# Fit spatial random effects model using stan
+```{r}
+
+Data_for_stan = list( N =  nrow(Managed_Area_Parameter_samples_sf)
+             ,  y = Managed_Area_Parameter_samples_sf$ResultValue*scale
+             , G = max(Managed_Area_Parameter_samples_sf$group)
+             , group = Managed_Area_Parameter_samples_sf$group
+             , positions = (Managed_Area_Parameter_samples_sf %>% as.data.frame() %>% dplyr::select(mean_lon, mean_lat, group) %>% distinct() %>% arrange(group))[,c("mean_lon","mean_lat")] # ordered by group
+             )
+              
+
+
+spatial_mean_RE.mod <- cmdstan_model(here("./code/spatial_mean_RE.stan"))
+
+ fit.spatial_mean_RE.Managed_Area_Parameter =  spatial_mean_RE.mod$sample(
+    data = Data_for_stan,
+    seed = 1111, 
+    chains = 4, # 8
+    parallel_chains = 4, # 8
+    refresh = 1000,
+    iter_warmup = 5000, 
+    iter_sampling = 5000,
+    thin =  1
+    #, adapt_delta = 0.99
+  )
+ 
+```
+# add some measure of prediction
+
+```{r}
+data.frame(empirical_mean = (Managed_Area_Parameter_samples_sf %>% group_by(UniversalReefID) %>% summarize( empirical_mean = scale*mean(ResultValue)))$empirical_mean, fitted_mean = fit.spatial_mean_RE.Managed_Area_Parameter$summary("site_mean")$mean) %>% 
+  ggplot(aes(x = empirical_mean, y = fitted_mean)) + geom_point() + geom_smooth() + ggtitle(paste(Managed_Area, Parameter)) + geom_abline(intercept = 0, slope = 1)
+```
+
+
+
+
+
+```{r}
+Managed_Area_Parameter_samples_sf %>% as.data.frame() %>% dplyr::select(UniversalReefID, FirstSampleYear, LastSampleYear, group) %>% distinct() %>% arrange(group) -> tmp1
+Managed_Area_Parameter_samples_sf %>% as.data.frame() %>% dplyr::select(UniversalReefID, ProgramLocationID) %>% distinct() %>% group_by(UniversalReefID) %>%
+  summarise(ProgramLocationID = paste(ProgramLocationID, collapse = ", "), .groups = "drop") -> tmp2
+
+tmp3 = inner_join(tmp1, tmp2,by = join_by(UniversalReefID)) %>% arrange(group)%>%group_by(ProgramLocationID) %>% 
+  mutate( label = paste("<b>UniversalReefID</b>", UniversalReefID, "<br><b>ProgramLocationID</b>", add_breaks(ProgramLocationID), "<br><b>sampled</b>", FirstSampleYear, "to", LastSampleYear))
+shiny_labels = as.vector(tmp3 %>% ungroup() %>% dplyr::select(label))$label
+rm(tmp1); rm(tmp2); rm(tmp3)
+
+```
+
+```{r} 
+if( Managed_Area == "Guana Tolomato Matanzas National Estuarine Research Reserve"){ # add a sub_area to the filename stem
+  filenamestem = paste(gsub(" ","_",Managed_Area), GTM_sub_area, gsub(" ","_",Parameter), sep = "_")
+  } else {
+    filenamestem = paste(gsub(" ","_",Managed_Area), gsub(" ","_",Parameter), sep = "_")
+  }
+
+
+print(filenamestem)                     
+fit.spatial_mean_RE.Managed_Area_Parameter$save_output_files(dir = here("./code/fits/"))  # tell stan to store locally here
+
+# Write out files needed for further analysis and Shiny visualizations
+
+write_rds(Data_for_stan, file = here(paste0("./code/data/",paste(filenamestem,"stan_data.RDS",sep="_")))) # data structure used by Stan
+write_rds(Managed_Area_Parameter_samples_sf, file =  here(paste0("./code/data/",paste(filenamestem,"complete_data.RDS",sep="_")))) # complete data
+write_rds(fit.spatial_mean_RE.Managed_Area_Parameter, file = here(paste0("./code/fits/",paste(filenamestem,"fit.RDS",sep="_")))) # data structure used by Stan
+write_rds(shiny_labels, here(paste0("./code/fits/",paste(filenamestem,"shiny_labels.RDS",sep="_"))))
+```
+# sd by sample size (per site)
+```{r}
+sd_by_sample_size = data.frame(sample_size = (Managed_Area_Parameter_samples_sf %>% group_by(UniversalReefID) %>% summarize( n = n()))$n, sd = fit.spatial_mean_RE.Managed_Area_Parameter$summary("site_mean")$sd) %>% arrange(sample_size)
+
+```
+```{r}
+sd_by_sample_size %>% ggplot(aes(x = sample_size, y = sd/scale)) + geom_jitter(width = 0.1, alpha = 0.2)  + geom_smooth() + ggtitle(" SD by sample size")
+```
+
+
+Prediction on a grid on a convex hull
+```{r}
+grid.managed_area_parameter.mean_preds = SpatialPrediction(fit = fit.spatial_mean_RE.Managed_Area_Parameter, legacy_positions = Data_for_stan$positions, grid_positions)
+grid.managed_area_parameter_positions_sd = data.frame(grid_positions, apply(grid.managed_area_parameter.mean_preds,2,sd))
+names(grid.managed_area_parameter_positions_sd) = c("X","Y","sd")
+
+# sd of prediction on oyster positions
+oyster.managed_area_parameter.mean_preds = SpatialPrediction(fit = fit.spatial_mean_RE.Managed_Area_Parameter, legacy_positions = Data_for_stan$positions, managed_area_oyster_objectID_points %>% dplyr::select(X,Y))
+oyster.managed_area_parameter_positions_sd = data.frame(managed_area_oyster_objectID_points, sd = apply(oyster.managed_area_parameter.mean_preds,2,sd))
+names(oyster.managed_area_parameter_positions_sd) = c("OBJECTID","X","Y","sd")
+
+# mean prediction on oyster positions
+oyster.managed_area_parameter_positions_mean = data.frame(managed_area_oyster_objectID_points, mean = abs(apply(oyster.managed_area_parameter.mean_preds,2,mean)))
+names(oyster.managed_area_parameter_positions_mean) = c("OBJECTID","X","Y","mean")
+
+# coefficient of variation (cv)
+oyster.managed_area_parameter_positions_cv = data.frame( OBJECTID = oyster.managed_area_parameter_positions_sd$OBJECTID,
+                                                         X = oyster.managed_area_parameter_positions_sd$X,
+                                                         Y = oyster.managed_area_parameter_positions_sd$Y,
+                                                         cv = oyster.managed_area_parameter_positions_sd$sd/(oyster.managed_area_parameter_positions_mean$mean + 0.1))
+
+
+# grts sample size is the total sample size including legacy points; there are only so many 
+sample_size = min(20 + nrow(Data_for_stan$positions), nrow(managed_area_oyster_objectID_points)) # includes the legacy points.
+managed_area_parameter_oyster.positions.sd.sf =st_as_sf(data.frame(managed_area_oyster_objectID_points, sd = apply(oyster.managed_area_parameter.mean_preds,2,sd), var  = apply(oyster.managed_area_parameter.mean_preds,2,var)), coords = c("X","Y"), crs =  st_crs("WGS84"))
+grts_new_positions = as.data.frame(st_coordinates(
+  grts(managed_area_parameter_oyster.positions.sd.sf,n_base = sample_size, projcrs_check = FALSE, aux_var = "var", legacy_sites = st_as_sf(Data_for_stan$positions, coords = c(1:2), crs =  st_crs("WGS84")) %>% mutate(var = 1))$sites_base)
+  )
+```
+
+
+```{r}
+system.time(
+  (sd_by_number_of_sites = SD_by_number_of_reefs(managed_area_oyster_objectID_points, oyster.managed_area_parameter.mean_preds,legacy_positions = Data_for_stan$positions, fit = fit.spatial_mean_RE.Managed_Area_Parameter))
+)
+
+```
+
+
+```{r}
+sd_by_number_of_sites %>% ggplot(aes(x = number_of_sites, y = sd/scale)) + geom_jitter(width = 0.1, alpha = 0.2)  + geom_smooth() + ggtitle("Simulated SD by GRTS sample size with estimation error")
+```
+```{r}
+system.time(
+(sd_by_number_of_sites_no_posteriors = SD_by_number_of_reefs_no_posteriors(managed_area_oyster_objectID_points, oyster.managed_area_parameter.mean_preds,legacy_positions = Data_for_stan$positions, fit = fit.spatial_mean_RE.Managed_Area_Parameter))
+)
+```
+
+```{r}
+sd_by_number_of_sites_no_posteriors %>% ggplot(aes(x = number_of_sites, y = sd/scale)) + geom_point()  + geom_smooth() + ggtitle("Simulated SD by GRTS sample size using means only")
+```
+
+
+
+
+# Package stuff up for shiny
+# "legacy" sample positions
+# HTML labels for legacy positions
+# Managed Area sf
+# Grid positions
+# Uncertainty estimates on grid positions
+# Oyster bed positions within managed area sf
+# Uncertainty estimates on oyster bed positions
+# GRTS estimated positions
+# sd by sample size
+
+```{r}
+shiny_store = list(
+Managed_Area = Managed_Area,
+Parameter = Parameter,
+Covariate = Covariate,  
+managed_area_parameter_sample_URI_positions = managed_area_parameter_sample_URI_positions,# "legacy" sample positions
+shiny_labels = shiny_labels, # HTML labels for legacy positions
+Managed_Area_sf = Managed_Area_sf, # Managed Area sf
+grid_positions = grid_positions,
+grid.managed_area_parameter_positions_sd = grid.managed_area_parameter_positions_sd,
+managed_area_oyster_objectID_points = managed_area_oyster_objectID_points,
+Oyster_Beds_in_Managed_Area = Oyster_Beds_in_Managed_Area, 
+oyster.managed_area_parameter_positions_sd = oyster.managed_area_parameter_positions_sd,
+oyster.managed_area_parameter_positions_mean = oyster.managed_area_parameter_positions_mean,
+oyster.managed_area_parameter_positions_cv = oyster.managed_area_parameter_positions_cv,
+grts_new_positions = grts_new_positions,
+sd_by_sample_size = sd_by_sample_size,
+sd_by_number_of_sites = sd_by_number_of_sites,
+sd_by_number_of_sites_no_posteriors = sd_by_number_of_sites_no_posteriors,
+fit_summary = fit.spatial_mean_RE.Managed_Area_Parameter$summary(c("global_global_mean","length_scale","gp_sigma")) %>% as.data.frame(),
+scale = scale)
+```
+
+All the data needed for a shiny UI except for the depth map
+```{r}
+write_rds(shiny_store, file =  here(paste0("./code/data/",paste(filenamestem,"shiny_store.RDS",sep="_"))))
+```
+
