@@ -18,100 +18,100 @@ reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
 
 #all the data needed for a shiny UI
 
-shiny_store_shell_height = read_rds(here("./code/data/EBAP_Shell_Height_shiny_store.RDS"))
-shiny_store_percent_live = read_rds(here("./code/data/EBAP_Percent_Live_shiny_store.RDS"))
-shiny_store_density = read_rds(here("./code/data/EBAP_Density_shiny_store.RDS"))
-belowsealevel = terra::rast(here("./code/data/EBAP_depth_map.tif")) # anything above sea-level is transparent
-Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
+# shiny_store_shell_height = read_rds(here("./code/data/EBAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/EBAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/EBAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/EBAP_depth_map.tif")) # anything above sea-level is transparent
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
 # 
+
 # shiny_store_shell_height = read_rds(here("./code/data/GRMAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GRMAP_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GRMAP_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GRMAP_depth_map.tif"))# anything above sea-level is transparent
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
-# 
+
+# # 
 # shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
+
 # shiny_store_shell_height = read_rds(here("./code/data/ANERR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/ANERR_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/ANERR_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/ANERR_depth_map.tif"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
-# 
+
+
 # 
 # shiny_store_shell_height = read_rds(here("./code/data/IRVBFPAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/IRVBFPAP_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/IRVBFPAP_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/IRVBFPAP_depth_map.tif"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
+
 # 
 # shiny_store_shell_height = read_rds(here("./code/data/LBAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/LBAP_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/LBAP_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/LBAP_depth_map.tif"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
-# 
+
+# # 
 # shiny_store_shell_height = read_rds(here("./code/data/PISAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/PISAP_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/PISAP_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/PISAP_depth_map.tif"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
+
 # 
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRGR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRGR_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRGR_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRGR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Guana River"
-# 
+
 # 
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRSR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRSR_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRSR_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRSR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Salt Run"
+
 # 
-# 
-# 
+# # 
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRTR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRTR_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRTR_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRTR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Tolomato River"
-# 
+
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRSA_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRSA_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRSA_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRSA_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve St Augustine"
-# 
-# 
+
+# # 
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRPF_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRPF_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRPF_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRPF_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Pellicer Flats"
-# 
+
 # shiny_store_shell_height = read_rds(here("./code/data/GTMNERRBB_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GTMNERRBB_Percent_Live_shiny_store.RDS"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRBB_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRBB_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Butler Beach"
-# 
-# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRFM_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRFM_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/GTMNERRFM_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/GTMNERRFM_depth_map.tif"))
-# Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Fort Matanzas"
+
+shiny_store_shell_height = read_rds(here("./code/data/GTMNERRFM_Shell_Height_shiny_store.RDS"))
+shiny_store_percent_live = read_rds(here("./code/data/GTMNERRFM_Percent_Live_shiny_store.RDS"))
+shiny_store_density = read_rds(here("./code/data/GTMNERRFM_Density_shiny_store.RDS"))
+belowsealevel = terra::rast(here("./code/data/GTMNERRFM_depth_map.tif"))
+Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Fort Matanzas"
 
 
 mag.map.title <- tags$style(HTML("
@@ -464,7 +464,7 @@ server <- function(input, output, session) {
     
   })
   output$interactivePlotShellHeightSampleSize <- renderPlotly({
-    k = ifelse(nrow(shiny_store_shell_height$sd_by_sample_size) <= 7, 1, 5)
+    k = ifelse(length(unique(shiny_store_shell_height$sd_by_sample_size$sample_size)) <= 7, 1, 5)
     ggfig11 <- shiny_store_shell_height$sd_by_sample_size %>%
       ggplot(aes(x = sample_size, y = sd)) +    geom_point() +
       geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = k), se = FALSE) +
@@ -487,7 +487,7 @@ server <- function(input, output, session) {
   })
   
   output$interactivePlotPercentLiveSampleSize <- renderPlotly({
-    k = ifelse(nrow(shiny_store_percent_live$sd_by_sample_size) <= 7, 1, 5)
+    k = ifelse(length(unique(shiny_store_percent_live$sd_by_sample_size$sample_size)) <= 7, 1, 5)
     ggfig21 <- shiny_store_percent_live$sd_by_sample_size %>%
       ggplot(aes(x = sample_size, y = sd)) + geom_point() +
       geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = k), se = FALSE) +
@@ -511,7 +511,7 @@ server <- function(input, output, session) {
   
   
   output$interactivePlotDensitySampleSize <- renderPlotly({
-    k = ifelse(nrow(shiny_store_density$sd_by_sample_size) <= 7, 1, 5)
+    k = ifelse(length(unique(shiny_store_density$sd_by_sample_size$sample_size)) <= 7, 1, 5)
     ggfig31 <- shiny_store_density$sd_by_sample_size %>%
       mutate(sd = 1000*sd) %>%
       ggplot(aes(x = sample_size, y = sd)) +
@@ -523,11 +523,13 @@ server <- function(input, output, session) {
     
   })
   output$interactivePlotDensityNumberSampleSites <- renderPlotly({
+    
+    
     ggfig32 <- shiny_store_density$sd_by_number_of_sites_no_posteriors %>%
       mutate(sd = 1000*sd) %>%
       ggplot(aes(x = number_of_sites, y = sd)) +
       geom_point() +
-      #geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = 5), se = FALSE) +
+      #geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = 2), se = FALSE) +
       geom_smooth( se = FALSE) +
       ylab("sd") + xlab("number of sites") + ggtitle("Density") +  plot_theme # theme(legend.position = "none")
     
@@ -646,14 +648,16 @@ server <- function(input, output, session) {
     # grts
    
     # add some general measure of uncertainty for all three parameters combined
-    
-    shiny_store_shell_height$oyster.managed_area_parameter_positions_sd %<>% mutate(uncertainty = (
-        normalize(shiny_store_shell_height$oyster.managed_area_parameter_positions_sd$sd)
+    # add a small amount in case there are zeros; grts fails
+    shiny_store_shell_height$oyster.managed_area_parameter_positions_sd %<>%  mutate(uncertainty = 0.1 + (
+       normalize(shiny_store_shell_height$oyster.managed_area_parameter_positions_sd$sd)
        + normalize(shiny_store_percent_live$oyster.managed_area_parameter_positions_sd$sd)
        + normalize(shiny_store_density$oyster.managed_area_parameter_positions_sd$sd))/3
-       )
-      
+    )
     
+  
+      
+   
     if( !is.null(exclude_these_points$data)){ # 
       names(exclude_these_points$data) = c("OBJECTID","X","Y") # whatever the names the user used, use X and Y
       excluded = inner_join(shiny_store_shell_height$oyster.managed_area_parameter_positions_sd, exclude_these_points$data,by = join_by(OBJECTID), keep = FALSE)
@@ -675,9 +679,10 @@ server <- function(input, output, session) {
       candidate_sites = st_as_sf(shiny_store_shell_height$oyster.managed_area_parameter_positions_sd, coords = c(2:3), crs =  st_crs("WGS84"))
     }
     
-   
-    legacy_sites = st_as_sf(shiny_store_shell_height$managed_area_parameter_sample_URI_positions, coords = c(2:3), crs =  st_crs("WGS84")) %>% mutate(sd = 1)
+ 
     
+    legacy_sites = st_as_sf(shiny_store_shell_height$managed_area_parameter_sample_URI_positions, coords = c(2:3), crs =  st_crs("WGS84")) %>% mutate(uncertainty = 1)
+
 
     if(!is.null(depth_range$range)) { 
       candidate_sites <- candidate_sites %>% filter( depth_range$range[1] <= depth & depth <= depth_range$range[2])
@@ -687,10 +692,13 @@ server <- function(input, output, session) {
       candidate_sites <- candidate_sites %>% filter( shape_area_range$range[1] <= Shapearea & Shapearea <= shape_area_range$range[2])
       
     }
-   
+    
+    
+
     grts_positions$df = inner_join(shiny_store_shell_height$managed_area_oyster_objectID_points,
                                    as.data.frame(st_coordinates(grts(candidate_sites,n_base = sample_size + nrow(legacy_sites), projcrs_check = FALSE, aux_var = "uncertainty", legacy_sites = legacy_sites)$sites_base)))
-    grts_positions$df = grts_positions$df[sample(1:nrow(grts_positions$df)),] # randomize the output
+   
+     grts_positions$df = grts_positions$df[sample(1:nrow(grts_positions$df)),] # randomize the output
     
 
     
