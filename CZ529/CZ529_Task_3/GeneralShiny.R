@@ -18,99 +18,99 @@ reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
 
 #all the data needed for a shiny UI
 
-# shiny_store_shell_height = read_rds(here("./code/data/Estero_Bay_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Estero_Bay_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Estero_Bay_Aquatic_Preserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Estero_Bay_Aquatic_Preserve_depth_map.tif")) # anything above sea-level is transparent
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_River_Marsh_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_River_Marsh_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_River_Marsh_Aquatic_Preserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_River_Marsh_Aquatic_Preserve_depth_map.tif"))# anything above sea-level is transparent
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Apalachicola_Bay_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Apalachicola_Bay_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Apalachicola_Bay_Aquatic_Preserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Apalachicola_Bay_Aquatic_Preserve_depth_map.tif"))
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-# shiny_store_shell_height = read_rds(here("./code/data/Apalachicola_National_Estuarine_Research_Reserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Apalachicola_National_Estuarine_Research_Reserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Apalachicola_National_Estuarine_Research_Reserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Apalachicola_National_Estuarine_Research_Reserve_depth_map.tif"))
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Indian_River-Vero_Beach_to_Ft._Pierce_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Indian_River-Vero_Beach_to_Ft._Pierce_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Indian_River-Vero_Beach_to_Ft._Pierce_Aquatic_Preserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Indian_River-Vero_Beach_to_Ft._Pierce_Aquatic_Preserve_depth_map.tif"))
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-
-shiny_store_shell_height = read_rds(here("./code/data/Lemon_Bay_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-shiny_store_percent_live = read_rds(here("./code/data/Lemon_Bay_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-shiny_store_density = read_rds(here("./code/data/Lemon_Bay_Aquatic_Preserve_Density_shiny_store.RDS"))
-belowsealevel = terra::rast(here("./code/data/Lemon_Bay_Aquatic_Preserve_depth_map.tif"))
+shiny_store_shell_height = read_rds(here("./code/data/EBAP_Shell_Height_shiny_store.RDS"))
+shiny_store_percent_live = read_rds(here("./code/data/EBAP_Percent_Live_shiny_store.RDS"))
+shiny_store_density = read_rds(here("./code/data/EBAP_Density_shiny_store.RDS"))
+belowsealevel = terra::rast(here("./code/data/EBAP_depth_map.tif")) # anything above sea-level is transparent
 Managed_Area_Title = shiny_store_shell_height$Managed_Area
 
-
-# shiny_store_shell_height = read_rds(here("./code/data/Pine_Island_Sound_Aquatic_Preserve_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Pine_Island_Sound_Aquatic_Preserve_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Pine_Island_Sound_Aquatic_Preserve_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Pine_Island_Sound_Aquatic_Preserve_depth_map.tif"))
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GRMAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GRMAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GRMAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GRMAP_depth_map.tif"))# anything above sea-level is transparent
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Guana_River_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Guana_River_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Guana_River_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Guana_River_depth_map.tif"))
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/ANERR_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/ANERR_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/ANERR_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/ANERR_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# 
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/IRVBFPAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/IRVBFPAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/IRVBFPAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/IRVBFPAP_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/LBAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/LBAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/LBAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/LBAP_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/PISAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/PISAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/PISAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/PISAP_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRGR_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRGR_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRGR_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRGR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Guana River"
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Salt_Run_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Salt_Run_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Salt_Run_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Salt_Run_depth_map.tif"))
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRSR_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRSR_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRSR_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRSR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Salt Run"
-
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Tolomato_River_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Tolomato_River_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Tolomato_River_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Tolomato_River_depth_map.tif"))
+# 
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRTR_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRTR_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRTR_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRTR_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Tolomato River"
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_St_Augustine_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_St_Augustine_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_St_Augustine_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_St_Augustine_depth_map.tif"))
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRSA_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRSA_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRSA_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRSA_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve St Augustine"
-
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Pellicer_Flats_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Pellicer_Flats_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Pellicer_Flats_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Pellicer_Flats_depth_map.tif"))
+# 
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRPF_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRPF_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRPF_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRPF_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Pellicer Flats"
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_depth_map.tif"))
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRBB_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRBB_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRBB_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRBB_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Butler Beach"
-
-# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Fort_Matanzas_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Fort_Matanzas_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Fort_Matanzas_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Fort_Matanzas_depth_map.tif"))
+# 
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRFM_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRFM_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRFM_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRFM_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Fort Matanzas"
 
 
