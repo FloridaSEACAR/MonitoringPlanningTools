@@ -54,28 +54,31 @@ Uncomment the Managed Area and Parameter you want to model
 If the Managed Area is Guana Tolomato Matanzas National Estuarine Research Reserve, select a sub area too
 ```{r}
 # Managed_Area = "Estero Bay Aquatic Preserve" 
-# Managed_Area = "Guana Tolomato Matanzas National Estuarine Research Reserve" # 237 points split across two regions 
- # GTM_sub_area = "Guana_River"
+ Managed_Area = "Guana Tolomato Matanzas National Estuarine Research Reserve" # 237 points split across regions 
+# GTM_sub_area = "Guana_River"
 # GTM_sub_area = "Salt_Run"
 # GTM_sub_area = "Tolomato_River"
 # GTM_sub_area = "St_Augustine"
 # GTM_sub_area = "Pellicer_Flats"
-# GTM_sub_area = "Butler_Beach"
+ GTM_sub_area = "Butler_Beach"
 # GTM_sub_area = "Fort_Matanzas"
 
 
 
 # Managed_Area = "Guana River Marsh Aquatic Preserve"
 # Managed_Area = "Apalachicola Bay Aquatic Preserve" 
-Managed_Area = "Apalachicola National Estuarine Research Reserve" # includes "Apalachicola Bay Aquatic Preserve" and 17 hrs for shell height
+# Managed_Area = "Apalachicola National Estuarine Research Reserve" # includes "Apalachicola Bay Aquatic Preserve" and 17 hrs for shell height
 # Managed_Area = "Indian River-Vero Beach to Ft. Pierce Aquatic Preserve" 
 ## Managed_Area = "Jensen Beach to Jupiter Inlet Aquatic Preserve"
 # Managed_Area = "Lemon Bay Aquatic Preserve" 
 # Managed_Area = "Pine Island Sound Aquatic Preserve" 
-#  Parameter = "Shell Height" 
- Parameter = "Percent Live"  
-# Parameter = "Density" 
-#Covariate = "None"
+
+
+
+# Parameter = "Shell Height" 
+# Parameter = "Percent Live"  
+Parameter = "Density" 
+Covariate = "None"
 scale = ifelse(Parameter == "Density",1/100, 1)
 
 ```
@@ -110,6 +113,7 @@ SEACAR_GIS_Processing_Layers_ORCP_Managed_Areas_Apr2025 %>%
 If "Apalachicola Bay Aquatic Preserve", restrict to 2018 or later. The data contain 200K samples dating back to 1982.
 If "Apalachicola National Estuarine Research Reserve", restrict to 2018 or later. The data contain 420K samples dating back to 1982.
 ```{r}
+sf_use_s2(FALSE) #turns off spherical geometry - there are some issues that sf complains about and this fixes them
 All_OYSTER_Parameters_2025_Apr_24 = read.table(here("./data/All_OYSTER_Parameters-2025-Apr-24.txt"),   sep = "|", header = TRUE,comment.char = "", quote = "")
 All_OYSTER_Parameters_2025_Apr_24 %<>% filter(OriginalLatitude != "NULL")
 All_OYSTER_Parameters_2025_Apr_24 %<>% filter(OriginalLongitude != "NULL")
