@@ -32,11 +32,11 @@ reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
 
 # # 
-# shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
+shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
+shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
+shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
+belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
+Managed_Area_Title = shiny_store_shell_height$Managed_Area
 
 # shiny_store_shell_height = read_rds(here("./code/data/ANERR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/ANERR_Percent_Live_shiny_store.RDS"))
@@ -106,12 +106,20 @@ reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
 # shiny_store_density = read_rds(here("./code/data/GTMNERRBB_Density_shiny_store.RDS"))
 # belowsealevel = terra::rast(here("./code/data/GTMNERRBB_depth_map.tif"))
 # Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Butler Beach"
+# 
 
-shiny_store_shell_height = read_rds(here("./code/data/GTMNERRFM_Shell_Height_shiny_store.RDS"))
-shiny_store_percent_live = read_rds(here("./code/data/GTMNERRFM_Percent_Live_shiny_store.RDS"))
-shiny_store_density = read_rds(here("./code/data/GTMNERRFM_Density_shiny_store.RDS"))
-belowsealevel = terra::rast(here("./code/data/GTMNERRFM_depth_map.tif"))
-Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Fort Matanzas"
+# shiny_store_shell_height = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/Guana_Tolomato_Matanzas_National_Estuarine_Research_Reserve_Butler_Beach_depth_map.tif"))
+# Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Butler Beach"
+
+
+# shiny_store_shell_height = read_rds(here("./code/data/GTMNERRFM_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/GTMNERRFM_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/GTMNERRFM_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/GTMNERRFM_depth_map.tif"))
+# Managed_Area_Title = "Guana Tolomato Matanzas National Estuarine Research Reserve Fort Matanzas"
 
 
 mag.map.title <- tags$style(HTML("
@@ -630,8 +638,9 @@ server <- function(input, output, session) {
     showModal(modalDialog(
       title = "Please Enter GRTS Sample Size",
       #numericInput("user_number", "Number:", value = NA),
-      sliderInput("user_number", label = "Number:", min = 1, max = max(0,min(50,number_candidate()-number_legacy()-number_excluded())), value = 1),
-      #sliderInput(inputId = "user_number", label = "Number:", min = 1, max = 50, value = 1),
+      #sliderInput("user_number", label = "Number:", min = 1, max = max(0,min(50,number_candidate()-number_legacy()-number_excluded())), value = 1),
+      # allows legacy sites to be chosen.
+      sliderInput("user_number", label = "Number:", min = 1, max = max(0,min(50,number_candidate()-number_excluded())), value = 1),
       footer = tagList(
         modalButton("Cancel"),
         actionButton("submit_number", "Submit")
@@ -695,9 +704,13 @@ server <- function(input, output, session) {
     
     
 
-    grts_positions$df = inner_join(shiny_store_shell_height$managed_area_oyster_objectID_points,
-                                   as.data.frame(st_coordinates(grts(candidate_sites,n_base = sample_size + nrow(legacy_sites), projcrs_check = FALSE, aux_var = "uncertainty", legacy_sites = legacy_sites)$sites_base)))
+    #grts_positions$df = inner_join(shiny_store_shell_height$managed_area_oyster_objectID_points,
+    #                              as.data.frame(st_coordinates(grts(candidate_sites,n_base = sample_size + nrow(legacy_sites), projcrs_check = FALSE, aux_var = "uncertainty", legacy_sites = legacy_sites)$sites_base)))
    
+     # does not use legacy sites
+    grts_positions$df = inner_join(shiny_store_shell_height$managed_area_oyster_objectID_points,
+                                                               as.data.frame(st_coordinates(grts(candidate_sites,n_base = sample_size, projcrs_check = FALSE, aux_var = "uncertainty")$sites_base)))
+                                   
      grts_positions$df = grts_positions$df[sample(1:nrow(grts_positions$df)),] # randomize the output
     
 
