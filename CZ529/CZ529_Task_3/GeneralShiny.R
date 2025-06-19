@@ -14,16 +14,16 @@ library(terra) # for raster (GeoTiff) reading
 library(spsurvey) # for grts
 
 # FWC - Oyster Beds in Florida
-reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
+reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_export_06-11-25.csv"))
 
 #all the data needed for a shiny UI
 
-# shiny_store_shell_height = read_rds(here("./code/data/EBAP_Shell_Height_shiny_store.RDS"))
-# shiny_store_percent_live = read_rds(here("./code/data/EBAP_Percent_Live_shiny_store.RDS"))
-# shiny_store_density = read_rds(here("./code/data/EBAP_Density_shiny_store.RDS"))
-# belowsealevel = terra::rast(here("./code/data/EBAP_depth_map.tif")) # anything above sea-level is transparent
-# Managed_Area_Title = shiny_store_shell_height$Managed_Area
-# 
+shiny_store_shell_height = read_rds(here("./code/data/EBAP_Shell_Height_shiny_store.RDS"))
+shiny_store_percent_live = read_rds(here("./code/data/EBAP_Percent_Live_shiny_store.RDS"))
+shiny_store_density = read_rds(here("./code/data/EBAP_Density_shiny_store.RDS"))
+belowsealevel = terra::rast(here("./code/data/EBAP_depth_map.tif")) # anything above sea-level is transparent
+Managed_Area_Title = shiny_store_shell_height$Managed_Area
+
 
 # shiny_store_shell_height = read_rds(here("./code/data/GRMAP_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/GRMAP_Percent_Live_shiny_store.RDS"))
@@ -32,11 +32,11 @@ reef_crosswalk_final = read.csv(here("./code/data/reef_crosswalk_final.csv"))
 # Managed_Area_Title = shiny_store_shell_height$Managed_Area
 
 # # 
-shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
-shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
-shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
-belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
-Managed_Area_Title = shiny_store_shell_height$Managed_Area
+# shiny_store_shell_height = read_rds(here("./code/data/ABAP_Shell_Height_shiny_store.RDS"))
+# shiny_store_percent_live = read_rds(here("./code/data/ABAP_Percent_Live_shiny_store.RDS"))
+# shiny_store_density = read_rds(here("./code/data/ABAP_Density_shiny_store.RDS"))
+# belowsealevel = terra::rast(here("./code/data/ABAP_depth_map.tif"))
+# Managed_Area_Title = shiny_store_shell_height$Managed_Area
 
 # shiny_store_shell_height = read_rds(here("./code/data/ANERR_Shell_Height_shiny_store.RDS"))
 # shiny_store_percent_live = read_rds(here("./code/data/ANERR_Percent_Live_shiny_store.RDS"))
@@ -175,12 +175,16 @@ min_shape_area = round(min(shiny_store_shell_height$Oyster_Beds_in_Managed_Area$
 max_shape_area = round(max(shiny_store_shell_height$Oyster_Beds_in_Managed_Area$Shapearea, na.rm = TRUE),3)
 
 OysterReefLabels = function(OBMA ){
-  return( OBMA %>% st_drop_geometry( )%>% dplyr::select(OBJECTID, SOURCEDATE, OYSTER, COMMENTS,Shapearea, depth) %>% 
-            mutate( label = paste("<b>OBJECTID</b> &nbsp", OBJECTID,"<br><b>SOURCEDATE</b> &nbsp",SOURCEDATE
+  return( OBMA %>% st_drop_geometry( )%>% dplyr::select(OBJECTID, UniversalReefID, SOURCEDATE, OYSTER, COMMENTS,Shapearea, depth) %>% 
+            mutate( label = paste("<b>OBJECTID</b> &nbsp", OBJECTID
+                                  ,"<br><b>UniversalReefID</b> &nbsp",UniversalReefID
+                                  ,"<br><b>SOURCEDATE</b> &nbsp",SOURCEDATE
                                   ,"<br><b>OYSTER</b> &nbsp",OYSTER,"<br><b>COMMENTS</b> &nbsp",COMMENTS,"<br><b>Shapearea</b> &nbsp" ,Shapearea, "<br><b>depth</b> &nbsp" ,depth)) %>% 
             dplyr::select(label))
 }
 
+# Join with reef_crosswalk_final to find UnversalReefID for OBJECTID if available.
+shiny_store_shell_height$Oyster_Beds_in_Managed_Area = left_join(shiny_store_shell_height$Oyster_Beds_in_Managed_Area, reef_crosswalk_final, join_by("OBJECTID"))
 ORL = lapply(OysterReefLabels(shiny_store_shell_height$Oyster_Beds_in_Managed_Area)$label, htmltools::HTML) # Oyster Reef Labels
 
 
